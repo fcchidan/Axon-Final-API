@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% load humanize %}
+{% load custom_filters %}
+{% block title %}Detalles del Producto{% endblock %}
+
+{% block content %}
+<div class="contenedor-detalle">
+    <div class="producto-card-detalle">
+        <div class="producto-imagen-detalle">
+            <img src="{{ producto.producto_imagen_principal }}" alt="Imagen del {{ producto.producto_nombre }}">
+        </div>
+        <div class="producto-detalles">
+            <h2 class="producto-nombre">{{ producto.producto_nombre }}</h2>
+            <p class="producto-sku">SKU: {{ producto.producto_codigo_comercial }}</p>
+            <p class="producto-categoria">Categoría: {{ producto.categoria_nombre }}</p>
+            <p class="producto-fabricante">Fabricante: {{ producto.fabricante_nombre }}</p>
+            <p class="producto-descripcion-detalle">Descripción: {{ producto.producto_descripcion }}</p>
+            <div class="producto-precio-api">Precio: ${{ producto.producto_precio_clp_neto|floatformat:"0"|add_decimal_separator }}</div>
+            <p class="producto-stock">
+                {% include 'stock_producto.html' with producto_id=producto.producto_id %}
+            </p>
+            <br>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'agregar_al_carrito' producto.producto_id %}" class="agregar-carrito-btn">Agregar al carrito</a>
+            {% else %}
+                <div class="mensaje-login">
+                    <h3>Inicia sesión para agregar este producto al carrito.</h3>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

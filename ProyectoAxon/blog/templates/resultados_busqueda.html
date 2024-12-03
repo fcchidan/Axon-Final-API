@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="titulo-buscador">
+    <h1>Resultados de Búsqueda para "{{ query }}"</h1>
+</div>
+
+<div class="productos-container">
+    {% if productos %}
+        {% for producto in productos %}
+            <div class="producto-card">
+                <div class="producto-imagen">
+                    <a href="{% url 'producto_detalle' producto.producto_id %}">
+                        <img src="{{ producto.producto_imagen_principal }}" alt="Imagen del {{ producto.producto_nombre }}">
+                    </a>
+                </div>
+                <div class="producto-detalles">
+                    <h2 class="producto-nombre">{{ producto.producto_nombre }}</h2>
+                    <p class="producto-sku">SKU: {{ producto.producto_codigo_comercial }}</p>
+                    
+                    <div class="producto-precio-api">Precio: $ {{ producto.producto_precio_clp_neto|floatformat:"0"|add_decimal_separator }}</div>
+                    <br>
+                    
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>No se encontraron productos que coincidan con "{{ query }}".</h3>
+    {% endif %}
+</div>
+<br>
+<div class="link-volver-busqueda">
+    <a href="{% url 'inicio' %}">Volver al inicio</a>
+</div>
+{% endblock %}
+
+
+

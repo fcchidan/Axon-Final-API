@@ -1,0 +1,12 @@
+<!-- templates/exito.html -->
+{% extends 'layout.html' %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block title %} Éxito {% endblock %}
+
+{% block content %}
+<h2>¡Orden Realizada con Éxito!</h2>
+<p>Gracias por tu compra. Hemos recibido tu orden y pronto nos pondremos en contacto contigo.</p>
+<a href="{% url 'inicio' %}" class="btn btn-primary">Volver al Inicio</a>
+{% endblock %}

@@ -1,0 +1,16 @@
+runtime: python39
+env: flex
+entrypoint: gunicorn -b :$PORT ProyectoAxon.wsgi
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'ProyectoAxon.settings'
+
+beta_settings:
+  cloud_sql_instances: 'axon-426916:us-central1:axondb'
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /.*
+  script: auto

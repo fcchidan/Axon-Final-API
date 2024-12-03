@@ -1,0 +1,12 @@
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+<body>
+    {% if stock %}
+        <p>Stock: <strong>{{ stock }}</strong></p>
+    {% elif error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% else %}
+        <p style="color: red;">Este producto tiene un tiempo estimado de entrega de 4 a 8 semanas.</p>
+    {% endif %}
+</body>

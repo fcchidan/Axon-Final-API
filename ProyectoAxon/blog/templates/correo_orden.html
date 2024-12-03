@@ -1,0 +1,84 @@
+{% load humanize %}
+{% load custom_filters %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        h2 {
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        .order-summary {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .order-summary th, .order-summary td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .order-summary th {
+            background-color: #f2f2f2;
+            color: #4CAF50;
+        }
+        .order-summary td {
+            font-size: 14px;
+        }
+        .total {
+            font-weight: bold;
+            color: #333;
+        }
+        .highlight {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Nuevo Pedido Recibido</h2>
+    
+    <p><span class="highlight">Cliente:</span> {{ nombre_cliente }}</p>
+    <p><span class="highlight">Email:</span> {{ email_cliente }}</p>
+    <p><span class="highlight">Dirección:</span> {{ direccion }}</p>
+    <p><span class="highlight">Teléfono:</span> {{ telefono }}</p>
+    <p><span class="highlight">Código Postal:</span> {{ codigo_postal }}</p>
+    
+    <h3>Detalles del Pedido:</h3>
+    <table class="order-summary">
+        <thead>
+            <tr>
+                <th>Nombre del Producto</th>
+                <th>SKU</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos_carrito %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.producto_codigo_comercial }}</td>
+                <td>{{ producto.cantidad }}</td>
+                <td>${{ producto.precio|default:"0"|floatformat:"0"|add_decimal_separator }}</td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="total">Total del Pedido</td>
+                <td class="total">${{ total_carrito|default:"0"|floatformat:"0"|add_decimal_separator }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% load humanize %}
+{% load custom_filters %}
+{% block content %}
+    <h1>Categorías de Productos</h1>
+    <ul>
+        {% for categoria in categorias %}
+            <li>
+                <a href="{% url 'productos_por_categoria' categoria.producto_categoria_nombre %}">
+                    {{ categoria.producto_categoria_nombre   }} - {{ categoria.producto_categoria_id }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
