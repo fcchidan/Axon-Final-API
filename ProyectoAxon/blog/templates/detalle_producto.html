@@ -11,10 +11,10 @@
         </div>
         <div class="producto-detalles">
             <h2 class="producto-nombre">{{ producto.producto_nombre }}</h2>
-            <p class="producto-sku">SKU: {{ producto.producto_codigo_comercial }}</p>
-            <p class="producto-categoria">Categoría: {{ producto.categoria_nombre }}</p>
-            <p class="producto-fabricante">Fabricante: {{ producto.fabricante_nombre }}</p>
-            <p class="producto-descripcion-detalle">Descripción: {{ producto.producto_descripcion }}</p>
+            <p class="producto-sku"><span class="bold-underline">SKU:</span> {{ producto.producto_codigo_comercial }}</p>
+            <p class="producto-categoria"><span class="bold-underline">Categoría:</span> {{ producto.categoria_nombre }}</p>
+            <p class="producto-fabricante"><span class="bold-underline">Fabricante:</span> {{ producto.fabricante_nombre }}</p>
+            <p class="producto-descripcion-detalle"><span class="bold-underline">Descripción:</span> {{ producto.producto_descripcion }}</p>
             <div class="producto-precio-api">Precio: ${{ producto.producto_precio_clp_neto|floatformat:"0"|add_decimal_separator }}</div>
             <p class="producto-stock">
                 {% include 'stock_producto.html' with producto_id=producto.producto_id %}
