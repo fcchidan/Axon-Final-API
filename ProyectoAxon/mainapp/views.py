@@ -937,6 +937,7 @@ def realizar_pedido(request):
         direccion = request.POST.get('direccion')
         telefono = request.POST.get('telefono')
         codigo_postal = request.POST.get('codigo_postal')
+        comentarios = request.POST.get('comentarios', '')  # Obtener los comentarios
 
         # Preparar los productos del carrito
         productos_carrito = []
@@ -957,7 +958,7 @@ def realizar_pedido(request):
         ])
 
         # Enviar el correo con los detalles del pedido y los datos adicionales
-        enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal)
+        enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentarios)
         
         # Limpiar el carrito después de enviar el correo
         request.session['carrito'] = {}
@@ -967,7 +968,7 @@ def realizar_pedido(request):
 
     return render(request, 'ingresar_direccion_envio.html')
 
-def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal):
+def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentarios):
     subject = 'Nuevo Pedido Recibido'
     
     context = {
@@ -978,6 +979,7 @@ def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_
         'direccion': direccion,
         'telefono': telefono,
         'codigo_postal': codigo_postal,
+        'comentarios': comentarios,  # Agregar los comentarios al contexto
     }
     
     template = get_template('correo_orden.html')
@@ -987,70 +989,12 @@ def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_
         subject,
         content,
         settings.EMAIL_HOST_USER,
-        ['ventas@axoningenieria.cl']
+        ['fcchidan@gmail.com'] # este correo es para pruebas, hay que cambiarlo por el correcto
     )
     email.attach_alternative(content, 'text/html')
     email.send()
 
 #----------------------------------------------------------------------boton busqueda----------------------------------------------
-
-"""
-def buscar_productos(request):
-    query = request.GET.get('q', '').strip()
-
-    if query:
-        headers = {
-            'content-type': 'application/json',
-            'access-token': OBUMA_API_KEY,  # Tu API key de Obuma
-        }
-
-        try:
-            # Solicitud a la API para obtener los productos
-            response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
-            
-            if response.status_code == 200:
-                # Imprimir en consola para depuración
-                print("Respuesta de la API:", response.json())
-
-                productos = response.json().get('data', [])
-
-                # Filtrar los productos por el término de búsqueda
-                productos_filtrados = [
-                    producto for producto in productos
-                    if query.lower() in producto.get('producto_nombre', '').lower()
-                ]
-
-                # Renderizar resultados
-                return render(request, 'resultados_busqueda.html', {
-                    'query': query,
-                    'productos': productos_filtrados,
-                })
-            else:
-                # Manejar errores de estado HTTP
-                mensaje = f"Error al obtener productos: Código {response.status_code}"
-                return render(request, 'resultados_busqueda.html', {
-                    'query': query,
-                    'mensaje': mensaje,
-                    'productos': []
-                })
-
-        except requests.exceptions.RequestException as e:
-            # Manejo de excepciones de red
-            mensaje = f"Error al comunicarse con la API: {str(e)}"
-            return render(request, 'resultados_busqueda.html', {
-                'query': query,
-                'mensaje': mensaje,
-                'productos': []
-            })
-
-    # Caso en que no se ingresó un término de búsqueda
-    mensaje = "Por favor, ingresa un término de búsqueda."
-    return render(request, 'resultados_busqueda.html', {
-        'query': query,
-        'mensaje': mensaje,
-        'productos': []
-    })"""
-
 def eliminar_acentos(texto):
     """
     Elimina los acentos de un texto dado.
