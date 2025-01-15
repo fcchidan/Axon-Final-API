@@ -4,6 +4,7 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="title-registro">
     <h1>{{title}}</h1>
 </div>
@@ -13,7 +14,6 @@
 <div class="form-container-registro">
     <form method="post" action="">
         {% csrf_token %}
-
         {% comment %}
             {{registro_form.as_p}}
         {% endcomment %}
@@ -24,6 +24,7 @@
                 {{i}}
             </div>
         {% endfor %}
+        
 
         <input type="submit" value="Registrarse" class="submit-button"/>
 

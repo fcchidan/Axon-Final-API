@@ -34,7 +34,8 @@ ALLOWED_HOSTS = ['*']
 OBUMA_API_KEY = config('OBUMA_API_KEY')
 OBUMA_URL = config('OBUMA_URL')
 
-
+RECAPTCHA_PUBLIC_KEY = '6Ld_ULYqAAAAAP9B-pftoIIjy6chtm38gw4sLxLZ'
+RECAPTCHA_PRIVATE_KEY = '6Ld_ULYqAAAAAByNkeaCEJtU6ls557CMXp_zvk7z'
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'django.contrib.humanize',
     'phonenumber_field',
+    'captcha',
 ]
 
 MIDDLEWARE = [

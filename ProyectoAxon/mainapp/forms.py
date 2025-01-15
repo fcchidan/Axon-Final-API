@@ -2,12 +2,15 @@ from django import forms
 from django.core import validators
 from blog.models import DireccionEnvio
 from django.contrib.auth.models import User
+from captcha.fields import ReCaptchaField
 
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class RegisterForm(UserCreationForm):
+    captcha = ReCaptchaField()  # Campo de reCAPTCHA
+
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from blog.models import Categoria, Producto, ElementoCarrito, Orden, DireccionEnvio, ElementoOrden
+from blog.models import Categoria, Producto, ElementoCarrito, Orden, DireccionEnvio, ElementoOrden, Pedido, DetalleProducto
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.forms import UserCreationForm
 from mainapp.forms import RegisterForm, DireccionEnvioForm
@@ -595,6 +595,7 @@ def obtener_detalle_producto(producto_id):
         return {'error': f"Error en la solicitud: {str(e)}"}
 
 """
+1- este era el original:
 
 def producto_detalle(request, producto_id):
     print(f"Buscando detalles para el producto_id: {producto_id}")  # Para depuración
@@ -625,15 +626,13 @@ def producto_detalle(request, producto_id):
     # Combina los datos del producto y del stock
     contexto = {
         'producto': producto,
+        'producto_id': producto.get('producto_id'),
         'stock': stock_data.get('stock', 'No disponible'),  # Valor por defecto si no hay stock
         'error': stock_data.get('error', None),            # Manejo de errores del stock
     }
 
     # Renderizar la plantilla con los detalles del producto y el stock
-    return render(request, 'detalle_producto.html', contexto)
-
-
-
+    return render(request, 'detalle_producto.html', contexto) 
 #categorias api /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -917,6 +916,7 @@ def disminuir_cantidad(request, producto_id):
     
 
 #----------------------------------------------------------enviar datos de la orden por correo-------------------------------------------------------------
+"""
 @login_required
 def realizar_pedido(request):
     if request.method == 'POST':
@@ -937,7 +937,8 @@ def realizar_pedido(request):
         direccion = request.POST.get('direccion')
         telefono = request.POST.get('telefono')
         codigo_postal = request.POST.get('codigo_postal')
-        comentarios = request.POST.get('comentarios', '')  # Obtener los comentarios
+        comentario = request.POST.get('comentario')
+
 
         # Preparar los productos del carrito
         productos_carrito = []
@@ -949,6 +950,7 @@ def realizar_pedido(request):
                 'producto_codigo_comercial': producto.get('producto_codigo_comercial')
             }
             productos_carrito.append(producto_info)
+        
 
         # Calcular el total del carrito de forma segura
         total_carrito = sum([
@@ -958,7 +960,7 @@ def realizar_pedido(request):
         ])
 
         # Enviar el correo con los detalles del pedido y los datos adicionales
-        enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentarios)
+        enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentario)
         
         # Limpiar el carrito después de enviar el correo
         request.session['carrito'] = {}
@@ -968,7 +970,73 @@ def realizar_pedido(request):
 
     return render(request, 'ingresar_direccion_envio.html')
 
-def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentarios):
+"""
+
+@login_required
+def realizar_pedido(request):
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+        
+        if not carrito:
+            return render(request, 'carrito_vacio.html')
+        
+        usuario = request.user
+        nombre_cliente = request.POST.get('nombre_cliente')  
+        email_cliente = request.POST.get('email_cliente')
+        direccion = request.POST.get('direccion')
+        telefono = request.POST.get('telefono')
+        codigo_postal = request.POST.get('codigo_postal')
+        comentario = request.POST.get('comentario')
+
+        productos_carrito = []
+        for producto_id, producto in carrito.items():
+            producto_info = {
+                'nombre': producto.get('producto_nombre'),
+                'precio': producto.get('producto_precio_clp_neto'),
+                'cantidad': producto.get('cantidad'),
+                'producto_codigo_comercial': producto.get('producto_codigo_comercial')
+            }
+            productos_carrito.append(producto_info)
+        
+        total_carrito = sum([
+            (float(producto['precio']) if producto['precio'] else 0) * 
+            (int(producto['cantidad']) if producto['cantidad'] else 1)
+            for producto in productos_carrito
+        ])
+
+        # Guardar el pedido en la base de datos
+        pedido = Pedido.objects.create(
+            usuario=usuario,
+            nombre_cliente=nombre_cliente,
+            email_cliente=email_cliente,
+            direccion=direccion,
+            telefono=telefono,
+            codigo_postal=codigo_postal,
+            comentario=comentario,
+            total_carrito=total_carrito
+        )
+
+        # Guardar los detalles de los productos, incluyendo el SKU
+        for producto in productos_carrito:
+            DetalleProducto.objects.create(
+                pedido=pedido,
+                nombre_producto=producto['nombre'],
+                precio=producto['precio'],
+                cantidad=producto['cantidad'],
+                producto_codigo_comercial=producto['producto_codigo_comercial']
+            )
+
+        # Enviar el correo
+        enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentario)
+        
+        # Limpiar el carrito y redirigir
+        request.session['carrito'] = {}
+        return render(request, 'exito.html', {'nombre_cliente': nombre_cliente, 'total_carrito': total_carrito})
+
+    return render(request, 'ingresar_direccion_envio.html')
+
+
+def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_cliente, direccion, telefono, codigo_postal, comentario):
     subject = 'Nuevo Pedido Recibido'
     
     context = {
@@ -979,7 +1047,7 @@ def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_
         'direccion': direccion,
         'telefono': telefono,
         'codigo_postal': codigo_postal,
-        'comentarios': comentarios,  # Agregar los comentarios al contexto
+        'comentario': comentario,
     }
     
     template = get_template('correo_orden.html')
@@ -989,10 +1057,11 @@ def enviar_correo_orden(productos_carrito, total_carrito, nombre_cliente, email_
         subject,
         content,
         settings.EMAIL_HOST_USER,
-        ['fcchidan@gmail.com'] # este correo es para pruebas, hay que cambiarlo por el correcto
+        ['fcchidan@gmail.com']
     )
     email.attach_alternative(content, 'text/html')
     email.send()
+
 
 #----------------------------------------------------------------------boton busqueda----------------------------------------------
 def eliminar_acentos(texto):
@@ -1167,5 +1236,6 @@ def inicio(request):
     productos_aleatorios = productos.get('data', [])
 
     return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios})
+
 
 

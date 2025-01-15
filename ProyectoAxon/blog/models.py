@@ -77,6 +77,7 @@ class DireccionEnvio(models.Model):
 
 class Orden(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    productos = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True)
     elementos = models.ManyToManyField(ElementoCarrito, through='ElementoOrden')
     direccion_envio = models.OneToOneField(DireccionEnvio, on_delete=models.CASCADE, null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -94,10 +95,11 @@ class Orden(models.Model):
             f"Correo: {correo}, "
             f"Total: {self.precio_total}"
         )
-
+    
     def obtener_productos(self):
         productos = self.elementoorden_set.all()
         return ", ".join([f"{p.cantidad} x {p.producto.titulo}" for p in productos])
+    
 
 
 
@@ -137,3 +139,31 @@ class ElementoOrden(models.Model):
             return f'{self.cantidad} x {self.elemento_carrito.producto.titulo} (Orden #{self.orden.id})'
         else:
             return f'{self.cantidad} x [Producto no disponible] (Orden #{self.orden.id})'
+
+#--------------------------------------------guardar info correo--------------------------------------
+
+class Pedido(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    nombre_cliente = models.CharField(max_length=100)
+    email_cliente = models.EmailField()
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=15)
+    codigo_postal = models.CharField(max_length=10)
+    comentario = models.TextField(blank=True, null=True)
+    total_carrito = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Pedido #{self.id} - {self.nombre_cliente}'
+    
+
+class DetalleProducto(models.Model):
+    pedido = models.ForeignKey(Pedido, related_name='detalles', on_delete=models.CASCADE)
+    nombre_producto = models.CharField(max_length=200)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.PositiveIntegerField()
+    producto_codigo_comercial = models.CharField(max_length=50, verbose_name="SKU")
+
+    def __str__(self):
+        return f'{self.nombre_producto} (x{self.cantidad}) - Pedido #{self.pedido.id}'
+    
