@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Seguridad</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        /* Estilo general del cuerpo */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Contenedor principal */
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Logo de la empresa */
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        /* Título */
+        h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Texto descriptivo */
+        p {
+            color: #666666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Botón de verificación */
+        button {
+            background-color: #004aad;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #003a8c;
+        }
+
+        /* Recaptcha */
+        .g-recaptcha {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'images/iconos/logo-Axon.png' %}" alt="Imagen Axon logo" class="logo">
+        <h1>Verificación de Seguridad</h1>
+        <p>Por favor, confirma que no eres un robot para acceder al sitio web.</p>
+        <form action="{% url 'verify_bot' %}" method="post">
+            {% csrf_token %}
+            <div class="g-recaptcha" data-sitekey="6Ld_ULYqAAAAAP9B-pftoIIjy6chtm38gw4sLxLZ"></div>
+            <button type="submit">Verificar</button>
+        </form>
+    </div>
+</body>
+</html>
+

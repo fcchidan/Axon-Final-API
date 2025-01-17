@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from .forms import PasswordResetForm, SetPasswordForm
+from django.http import HttpResponse
 import json 
 # API Obuma
 import random
@@ -1238,4 +1239,22 @@ def inicio(request):
     return render(request, 'index.html', {'productos_aleatorios': productos_aleatorios})
 
 
+#---------------------------------------verificador pagina principal de bots--------------------------------------
+def verify_bot(request):
+    if request.method == 'POST':
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': settings.RECAPTCHA_PRIVATE_KEY,
+            'response': recaptcha_response
+        }
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        response = requests.post(url, data=data)
+        result = response.json()
 
+        if result.get('success'):
+            # Verificación exitosa, redirige a la página principal
+            request.session['verified'] = True
+            return redirect('inicio')  # Cambia 'home' por la URL principal de tu sitio
+        else:
+            return HttpResponse('Error: No se pudo verificar. Intenta nuevamente.')
+    return render(request, 'verify.html')

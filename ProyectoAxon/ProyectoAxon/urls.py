@@ -23,7 +23,9 @@ from django.conf import settings
 
 
 
+
 urlpatterns = [
+    path('verificar/', views.verify_bot, name='verify_bot'),
     path('admin/', admin.site.urls),
     path('', views.inicio, name="inicio"),
     path('inicio/', views.inicio, name="inicio"),
