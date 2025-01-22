@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+from .requests_cache_setup import setup_cache
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,9 @@ OBUMA_URL = config('OBUMA_URL')
 RECAPTCHA_PUBLIC_KEY = '6Ld_ULYqAAAAAP9B-pftoIIjy6chtm38gw4sLxLZ'
 RECAPTCHA_PRIVATE_KEY = '6Ld_ULYqAAAAAByNkeaCEJtU6ls557CMXp_zvk7z'
 # Application definition
+
+# Configura requests-cache al iniciar el proyecto
+setup_cache()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,6 +89,9 @@ TEMPLATES = [
         },
     },
 ]
+
+
+
 
 WSGI_APPLICATION = 'ProyectoAxon.wsgi.application'
 

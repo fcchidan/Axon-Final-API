@@ -81,6 +81,7 @@ urlpatterns = [
     path('productos/aleatorios/', views.productos_aleatorios, name='productos_aleatorios'),
     path('producto/<int:producto_id>/stock/', views.producto_stock, name='productos_stock'),
     #path('producto/<int:producto_id>/stock/', views.obtener_stock_producto, name='obtener_stock_producto'),
+    path('obtener-productos/', views.obtener_productos_view, name='obtener_productos'),
     
     
     

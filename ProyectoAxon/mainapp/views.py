@@ -24,6 +24,14 @@ import requests
 from django.http import JsonResponse
 OBUMA_API_KEY = "37bc03e39bdebcb7db9160d6e89474c3"  
 OBUMA_URL = 'https://api.obuma.cl/v1.0'
+import requests_cache
+
+# Configura el caché al inicio
+requests_cache.install_cache(
+    cache_name='obuma_cache',
+    backend='sqlite',
+    expire_after=1800  # 30 minutos
+)
 
 from collections import Counter
 import unicodedata
@@ -1258,3 +1266,18 @@ def verify_bot(request):
         else:
             return HttpResponse('Error: No se pudo verificar. Intenta nuevamente.')
     return render(request, 'verify.html')
+
+#---------------------------------------------caché---------------------------------------
+
+
+
+
+def obtener_productos_view(request):
+    if request.method != "GET":
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+    try:
+        productos = obtener_productos()
+        return JsonResponse(productos, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
