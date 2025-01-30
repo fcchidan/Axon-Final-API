@@ -1271,7 +1271,6 @@ def verify_bot(request):
 
 
 
-
 def obtener_productos_view(request):
     if request.method != "GET":
         return JsonResponse({'error': 'Método no permitido'}, status=405)

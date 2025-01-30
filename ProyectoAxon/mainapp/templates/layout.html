@@ -6,19 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Iconos FontAwesome-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-    <title>
-        {% block title %}
-
-        {% endblock %}
-        | Axon ingeniería eléctrica
-    </title>
+    <title>Axon ingeniería eléctrica | {% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Descubre Axon Ingeniería, tu aliado en soluciones innovadoras y productos de ingeniería de alta calidad. Explora nuestra amplia gama de productos y servicios diseñados para satisfacer tus necesidades.{% endblock %}">
+    <meta name="keywords" content="ingeniería, productos, Axon Ingeniería, innovación, soluciones industriales">
+    <meta name="author" content="Axon Ingeniería">
+    <link rel="icon" type="image" href="{% static 'images/iconos/logo-Axon.png' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <script>
         // Guardar la posición del scroll en localStorage antes de recargar la página
         window.addEventListener('beforeunload', function() {
             localStorage.setItem('scrollPosition', window.scrollY);
         });
-
         // Restaurar la posición del scroll desde localStorage cuando la página se carga
         window.addEventListener('load', function() {
             if (localStorage.getItem('scrollPosition') !== null) {
@@ -26,19 +24,14 @@
             }
         });
     </script>
-    
 </head>
-
 <body>
     {% include 'busqueda.html' %}
     <!--Agregar numero whatsapp-->
     <a href="https://wa.me/56931769792?text=Hola, quiero información de sus productos" target="_blank" class="float"><i class="fa-brands fa-whatsapp"></i></a>
-    
-    <header>
-        
+    <header>        
         <div id="logotipo">
-            <a href="/inicio"><img src="{% static 'images/iconos/logo-Axon.png' %}" alt="Imagen Axon logo"></a>
-            
+            <a href="/inicio"><img src="{% static 'images/iconos/logo-Axon.png' %}" alt="Imagen Axon logo"></a>           
             <nav>
                 <ul>
                     {% if user.email %}
@@ -59,12 +52,10 @@
                         <li>
                             <a href="{% url 'login' %}">Login</a>
                         </li>
-                        
                     {% endif %}
                 </ul>
             </nav>
         </div>
-        
         <hr>
     </header>
     <nav>
@@ -110,17 +101,14 @@
                     <a href="{% url 'page' page.1 %}">{{page.0}}</a>
                 </li>
             {% endfor %}
-
         </ul>
     </nav>
     <div id="content">
         <div class="box">
             {% block content %}
-
             {% endblock %}
         </div>
     </div>
-
     <footer class="pie-pagina">
         <div class="grupo-1">
             <div class="box1">
@@ -137,7 +125,6 @@
                     {% endfor %}
                 </ul>
             </div>
-
             <div class="box1">
                 <h2>Contáctanos</h2>
                 <h4>LLÁMANOS AL</h4>
@@ -173,7 +160,6 @@
                 </div>
             </div>
             -->
-            
         </div>
         <hr>
         <div class="grupo-2">
@@ -181,5 +167,4 @@
         </div>
     </footer>
 </body>
-
 </html>
