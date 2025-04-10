@@ -22,8 +22,7 @@ import json
 import random
 import requests
 from django.http import JsonResponse
-OBUMA_API_KEY = "37bc03e39bdebcb7db9160d6e89474c3"  
-OBUMA_URL = 'https://api.obuma.cl/v1.0'
+
 import requests_cache
 
 # Configura el caché al inicio
