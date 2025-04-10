@@ -22,7 +22,7 @@ import json
 import random
 import requests
 from django.http import JsonResponse
-
+from django.conf import settings
 import requests_cache
 
 # Configura el caché al inicio
@@ -455,11 +455,11 @@ def set_user_info(sender, instance, created, **kwargs):
 def producto_stock(request, producto_id):
     headers = {
         'Content-Type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
     try:
         # Construcción de la URL
-        url = f"{OBUMA_URL}/productosStock.findById.json/{producto_id}"
+        url = f"{settings.OBUMA_URL}/productosStock.findById.json/{producto_id}"
         response = requests.get(url, headers=headers)
 
         if response.status_code == 200:
@@ -495,17 +495,17 @@ def producto(request, producto_id):
 def obtener_productos():
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
         # Obtener todos los productos
-        productos_response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
+        productos_response = requests.get(f"{settings.OBUMA_URL}/productos.list.json", headers=headers)
         if productos_response.status_code != 200:
             return {'error': f'Error al obtener productos: {productos_response.status_code}'}
 
         # Obtener todas las categorías
-        categorias_response = requests.get(f"{OBUMA_URL}/productosCategorias.list.json", headers=headers)
+        categorias_response = requests.get(f"{settings.OBUMA_URL}/productosCategorias.list.json", headers=headers)
         if categorias_response.status_code != 200:
             return {'error': f'Error al obtener categorías: {categorias_response.status_code}'}
 
@@ -552,12 +552,12 @@ def listar_productos(request):
 def obtener_detalle_producto(producto_id):
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
     
     try:
         # Obtener el detalle del producto específico
-        response = requests.get(f"{OBUMA_URL}/productos.list.json?id={producto_id}", headers=headers)
+        response = requests.get(f"{settings.OBUMA_URL}/productos.list.json?id={producto_id}", headers=headers)
 
         print(f"Estado de la respuesta: {response.status_code}")  # Para depurar
         print(f"Contenido de la respuesta: {response.text}")      # Para depurar
@@ -647,11 +647,11 @@ def producto_detalle(request, producto_id):
 def obtener_categorias():
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
-        response = requests.get(f"{OBUMA_URL}/productosCategorias.list.json", headers=headers)
+        response = requests.get(f"{settings.OBUMA_URL}/productosCategorias.list.json", headers=headers)
 
         print(f"Estado de la respuesta: {response.status_code}")
         print(f"Contenido de la respuesta: {response.text}")
@@ -667,12 +667,12 @@ def obtener_categorias():
 def obtener_fabricantes():
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
         # Asegúrate de que la URL sea la correcta para obtener fabricantes
-        response = requests.get(f"{OBUMA_URL}/productosFabricantes.list.json", headers=headers)
+        response = requests.get(f"{settings.OBUMA_URL}/productosFabricantes.list.json", headers=headers)
 
         print(f"Estado de la respuesta: {response.status_code}")
         print(f"Contenido de la respuesta: {response.text}")
@@ -699,12 +699,12 @@ def listar_categorias(request):# ESTO SE PODRIA ELIMINAR SI SE QUIERE, TAMBIEN H
 def obtener_productos_por_categoria(categoria_id):
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
         # Obtener todas las categorías
-        categorias_response = requests.get(f"{OBUMA_URL}/productosCategorias.list.json", headers=headers)
+        categorias_response = requests.get(f"{settings.OBUMA_URL}/productosCategorias.list.json", headers=headers)
         if categorias_response.status_code != 200:
             return {'error': f'Error al obtener categorías: {categorias_response.status_code}'}
         
@@ -718,7 +718,7 @@ def obtener_productos_por_categoria(categoria_id):
         fabricantes_dict = {fabricante['producto_fabricante_id']: fabricante['producto_fabricante_nombre'] for fabricante in fabricantes}
 
         # Obtener todos los productos
-        productos_response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
+        productos_response = requests.get(f"{settings.OBUMA_URL}/productos.list.json", headers=headers)
         if productos_response.status_code != 200:
             return {'error': f'Error al obtener productos: {productos_response.status_code}'}
 
@@ -774,12 +774,12 @@ def error_view(request):
 def agregar_al_carrito(request, producto_id):
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
         # Obtener el detalle del producto específico
-        response = requests.get(f"{OBUMA_URL}/productos.list.json?id={producto_id}", headers=headers)
+        response = requests.get(f"{settings.OBUMA_URL}/productos.list.json?id={producto_id}", headers=headers)
         print(f"Estado de la respuesta: {response.status_code}")  # Para depurar
         print(f"Contenido de la respuesta: {response.text}")      # Para depurar
 
@@ -802,7 +802,7 @@ def agregar_al_carrito(request, producto_id):
                 producto['fabricante_nombre'] = fabricantes_dict.get(producto.get('producto_fabricante'), 'Desconocido')
 
                 # Obtener todas las categorías para poder mostrar el nombre
-                categorias_response = requests.get(f"{OBUMA_URL}/productosCategorias.list.json", headers=headers)
+                categorias_response = requests.get(f"{settings.OBUMA_URL}/productosCategorias.list.json", headers=headers)
                 if categorias_response.status_code != 200:
                     return {'error': f'Error al obtener categorías: {categorias_response.status_code}'}
 
@@ -1087,12 +1087,12 @@ def buscar_productos(request):
     if query:
         headers = {
             'content-type': 'application/json',
-            'access-token': OBUMA_API_KEY,  # Tu API key de Obuma
+            'access-token': settings.OBUMA_API_KEY,  # Tu API key de Obuma
         }
 
         try:
             # Solicitud a la API para obtener los productos
-            response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
+            response = requests.get(f"{settings.OBUMA_URL}/productos.list.json", headers=headers)
             
             if response.status_code == 200:
                 # Imprimir en consola para depuración
@@ -1151,10 +1151,10 @@ def mostrar_productos_buscados(request):
         # Aquí podrías hacer una consulta a la API para obtener los detalles de cada producto
         headers = {
             'content-type': 'application/json',
-            'access-token': OBUMA_API_KEY,
+            'access-token': settings.OBUMA_API_KEY,
         }
 
-        response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
+        response = requests.get(f"{settings.OBUMA_URL}/productos.list.json", headers=headers)
 
         if response.status_code == 200:
             productos = response.json().get('data', [])
@@ -1173,17 +1173,17 @@ def mostrar_productos_buscados(request):
 def obtener_productos_aleatorios():
     headers = {
         'content-type': 'application/json',
-        'access-token': OBUMA_API_KEY,
+        'access-token': settings.OBUMA_API_KEY,
     }
 
     try:
         # Obtener todos los productos
-        productos_response = requests.get(f"{OBUMA_URL}/productos.list.json", headers=headers)
+        productos_response = requests.get(f"{settings.OBUMA_URL}/productos.list.json", headers=headers)
         if productos_response.status_code != 200:
             return {'error': f'Error al obtener productos: {productos_response.status_code}'}
 
         # Obtener todas las categorías
-        categorias_response = requests.get(f"{OBUMA_URL}/productosCategorias.list.json", headers=headers)
+        categorias_response = requests.get(f"{settings.OBUMA_URL}/productosCategorias.list.json", headers=headers)
         if categorias_response.status_code != 200:
             return {'error': f'Error al obtener categorías: {categorias_response.status_code}'}
 
